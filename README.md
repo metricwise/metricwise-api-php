@@ -14,9 +14,9 @@ $lead = array(
 	'description' => 'Lead is interested in...',
 	'firstname' => 'Jon',
 	'lastname' => 'Doe', # Required field
-	'address' => '123 Main St',
+	'lane' => '123 Main St',
 	'city' => 'Small Town',
-	'zip' => '12345',
+	'code' => '12345',
 	'email' => 'jon.doe@example.com',
 	'phone' => '5558675309',
 );
