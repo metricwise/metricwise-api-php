@@ -5,7 +5,7 @@
 require_once('MetricWiseAPI.php');
 
 $mwapi = new MetricWiseAPI();
-$mwapi->setHostname('https://XXX.metricwise.net');
+$mwapi->setHostname('https://api-XXX.metricwise.net');
 $mwapi->setUsername('MarketingPartner');
 $mwapi->setAccessKey('secretKey');
 $lead = array(

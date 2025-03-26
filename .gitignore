@@ -1,2 +1,3 @@
-/.phpunit*
-/phpunit*
+/.env
+/composer.lock
+/vendor/

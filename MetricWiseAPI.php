@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2012-2021 MetricWise, Inc.
+ * @copyright 2012-2025 MetricWise, Inc.
  * @license https://opensource.org/licenses/MIT
  */
 class MetricWiseAPI
@@ -31,7 +31,7 @@ class MetricWiseAPI
 	public function setAccessKey($accessKey) {
 		$this->accessKey = $accessKey;
 	}
-	
+
 	/**
 	 * @param string $hostname
 	 */
@@ -57,74 +57,25 @@ class MetricWiseAPI
 	 * @param array $lead
 	 */
 	public function submitLead($lead) {
-		return $this->submit('Leads', $lead);
-	}
+		$curl = curl_init("$this->hostname/mwapi/lead");
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("x-api-key: $this->username:$this->accessKey"));
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($lead));
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($curl);
+		$this->error = curl_error($curl);
+		$errno = curl_errno($curl);
+		$httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
 
-	/**
-	 * @param string
-	 */
-	private function setError($error) {
-		$this->error = $error;
-	}
-
-	/**
-	 * @param string $module
-	 * @param array $element
-	 */
-	private function submit($module, $element) {
-		$this->error = "";
-
-		$response = $this->webservice();
-		if (!$response['success']) {
-			echo $response['error']['message'];
-			return false;
-		}
-		$token = $response['result']['token'];
-		
-		$response = $this->webservice(array(
-			'operation' => 'login',
-			'username' => $this->username,
-			'accessKey' => md5($token . $this->accessKey),
-		));
-		if (!$response['success']) {
-			$this->error = $response['error']['message'];
-			return false;
-		}
-		$sessionName = $response['result']['sessionName'];
-		$userId = $response['result']['userId'];
-
-		$element['assigned_user_id'] = $userId;
-		
-		$response = $this->webservice(array(
-			'operation' => 'create',
-			'sessionName' => $sessionName,
-			'elementType' => $module,
-			'element' => json_encode($element),
-		));
-		if (!$response['success']) {
-			$this->error = $response['error']['message'];
+		if ($errno) {
 			return false;
 		}
 
-		$this->webservice(array(
-			'operation' => 'logout',
-			'sessionName' => $sessionName,
-		));
+		if (202 != $httpcode) {
+			$this->error = json_decode($result)->message;
+			return false;
+		}
 
 		return true;
-	}
-
-	private function webservice($postfields = null) {
-		if ($postfields) {
-			$curl = curl_init("$this->hostname/webservice.php");
-			curl_setopt($curl, CURLOPT_POST, true);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $postfields);
-		} else {
-			$curl = curl_init("$this->hostname/webservice.php?operation=getchallenge&username=$this->username");
-		}
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$json = curl_exec($curl);
-		curl_close($curl);
-		return json_decode($json, true);
 	}
 }

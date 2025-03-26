@@ -5,6 +5,8 @@ require_once('MetricWiseAPI.php');
 
 final class MetricWiseAPITest extends TestCase
 {
+    private $mwapi;
+
     protected function setUp(): void
     {
         $this->mwapi = new MetricWiseAPI();
@@ -22,6 +24,8 @@ final class MetricWiseAPITest extends TestCase
     public function testSubmitLeadFail(): void
     {
         $lead = array();
-        $this->assertFalse($this->mwapi->submitLead($lead), "should fail with lastname does not have a value");
+        $this->mwapi->setAccessKey('bogus');
+        $this->assertFalse($this->mwapi->submitLead($lead));
+        $this->assertEquals($this->mwapi->getError(), 'Forbidden');
     }
 }

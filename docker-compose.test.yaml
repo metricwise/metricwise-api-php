@@ -1,0 +1,13 @@
+name: metricwise-api-php-test
+services:
+  composer:
+    image: composer:lts
+    volumes:
+      - .:/app
+  php:
+    image: php:8-cli
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - .:/app

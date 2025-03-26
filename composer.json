@@ -1,0 +1,14 @@
+{
+    "name": "metricwise/metricwise-api-php",
+    "description": "Metricwise API (PHP)",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Heinz",
+            "email": "adam.heinz@metricwise.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^12.0"
+    }
+}
